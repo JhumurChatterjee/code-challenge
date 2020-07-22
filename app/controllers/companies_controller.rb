@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, except: [:index, :create, :new]
+  before_action :set_company, except: [:index, :new, :create]
 
   def index
     @companies = Company.all
@@ -30,7 +30,12 @@ class CompaniesController < ApplicationController
     else
       render :edit
     end
-  end  
+  end
+
+  def destroy
+    @company.destroy
+    redirect_to companies_path, notice: t("notice.destroy", name: @company.name)
+  end
 
   private
 
@@ -49,5 +54,5 @@ class CompaniesController < ApplicationController
   def set_company
     @company = Company.find(params[:id])
   end
-  
+
 end

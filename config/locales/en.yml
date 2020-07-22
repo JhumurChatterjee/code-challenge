@@ -31,3 +31,6 @@
 
 en:
   hello: "Hello world"
+
+  notice:
+    destroy: "%{name} has been successfully deleted."

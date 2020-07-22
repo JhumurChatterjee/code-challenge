@@ -58,4 +58,25 @@ class CompaniesControllerTest < ApplicationSystemTestCase
     assert_equal "28173", last_company.zip_code
   end
 
+  test "When user confirms to delete" do
+    visit company_path(@company)
+
+    accept_confirm do
+      click_link "Delete"
+    end
+
+    assert_text I18n.t("notice.destroy", name: @company.name)
+    assert_text "Create a Company"
+  end
+
+  test "When user denies to delete" do
+    visit company_path(@company)
+
+    dismiss_confirm do
+      click_link "Delete"
+    end
+
+    assert_text @company.name
+  end
+
 end
