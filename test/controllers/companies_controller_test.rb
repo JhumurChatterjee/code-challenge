@@ -24,12 +24,13 @@ class CompaniesControllerTest < ApplicationSystemTestCase
     assert_text "City, State"
   end
 
-  test "Update" do
+  test "Update without email" do
     visit edit_company_path(@company)
 
     within("form#edit_company_#{@company.id}") do
       fill_in("company_name", with: "Updated Test Company")
       fill_in("company_zip_code", with: "93009")
+      fill_in("company_email", with: "")
       click_button "Update Company"
     end
 
@@ -38,16 +39,47 @@ class CompaniesControllerTest < ApplicationSystemTestCase
     @company.reload
     assert_equal "Updated Test Company", @company.name
     assert_equal "93009", @company.zip_code
+    assert_equal "", @company.email
   end
 
-  test "Create" do
+  test "Update with valid email" do
+    visit edit_company_path(@company)
+
+    within("form#edit_company_#{@company.id}") do
+      fill_in("company_name", with: "Updated Test Company")
+      fill_in("company_zip_code", with: "93009")
+      fill_in("company_email", with: "hello@getmainstreet.com")
+      click_button "Update Company"
+    end
+
+    assert_text "Changes Saved"
+
+    @company.reload
+    assert_equal "Updated Test Company", @company.name
+    assert_equal "93009", @company.zip_code
+    assert_equal "hello@getmainstreet.com", @company.email
+  end
+
+  test "Update with invalid email" do
+    visit edit_company_path(@company)
+
+    within("form#edit_company_#{@company.id}") do
+      fill_in("company_name", with: "Updated Test Company")
+      fill_in("company_zip_code", with: "93009")
+      fill_in("company_email", with: "hello@test.com")
+      click_button "Update Company"
+    end
+
+    assert_text "should belong to getmainstreet.com domain"
+  end
+
+  test "Create without email" do
     visit new_company_path
 
     within("form#new_company") do
       fill_in("company_name", with: "New Test Company")
       fill_in("company_zip_code", with: "28173")
       fill_in("company_phone", with: "5553335555")
-      fill_in("company_email", with: "new_test_company@test.com")
       click_button "Create Company"
     end
 
@@ -56,6 +88,38 @@ class CompaniesControllerTest < ApplicationSystemTestCase
     last_company = Company.last
     assert_equal "New Test Company", last_company.name
     assert_equal "28173", last_company.zip_code
+  end
+
+  test "Create with valid email" do
+    visit new_company_path
+
+    within("form#new_company") do
+      fill_in("company_name", with: "New Test Company")
+      fill_in("company_zip_code", with: "28173")
+      fill_in("company_phone", with: "5553335555")
+      fill_in("company_email", with: "hello@getmainstreet.com")
+      click_button "Create Company"
+    end
+
+    assert_text "Saved"
+
+    last_company = Company.last
+    assert_equal "New Test Company", last_company.name
+    assert_equal "28173", last_company.zip_code
+  end
+
+  test "Create with invalid email" do
+    visit new_company_path
+
+    within("form#new_company") do
+      fill_in("company_name", with: "New Test Company")
+      fill_in("company_zip_code", with: "28173")
+      fill_in("company_phone", with: "5553335555")
+      fill_in("company_email", with: "hello@test.com")
+      click_button "Create Company"
+    end
+
+    assert_text "should belong to getmainstreet.com domain"
   end
 
   test "When user confirms to delete" do
